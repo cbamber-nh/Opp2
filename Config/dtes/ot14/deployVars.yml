@@ -1,0 +1,6 @@
+# File: deployVars.yml
+variables:
+  artifactLocation: navinet-npm-feature
+  azureSubscription: nn-dev-ot14
+  storageAccount: nndevot14saopp
+  resourceGroup: nn-dev-ot14-rg

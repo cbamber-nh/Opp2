@@ -1,0 +1,13 @@
+# File: terraformVars
+variables:
+  tfApprove: false
+  tfResourceGroup: cb-dev-opp2-rg
+  tfResourceManager: cb-dev
+  tfStateResourceGroup: cb-dev-opp2-state-rg
+  tfStateStorageAccount: cbdevopp2tsstatesa
+  tfStateContainerName: cb-dev-opp2-c
+  tfStorageAccount: cbdevopp2sa
+  tfSubscription: cb-dev
+  tfVarFile: dev\cbmsdn
+  tfValidationUsers:
+  tfMockAppStorageAccount: cbdevmockappsa

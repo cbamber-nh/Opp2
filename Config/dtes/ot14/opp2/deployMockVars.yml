@@ -1,0 +1,5 @@
+# File: deployVars.yml
+variables:
+  storageAccountMock: nndevot14mockappsa
+  apiMockRoot: https://nndevot14mockappsa.z13.web.core.windows.net/
+  oppRemote: opp@https://nndevot14opp2sa.z13.web.core.windows.net/remoteEntry.js

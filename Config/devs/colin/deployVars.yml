@@ -1,0 +1,8 @@
+# File: deployVars.yml
+variables:
+  artifactLocation: navinet-npm-feature
+  azureSubscription: nn-dev-ot14
+  storageAccount: nndevot14cbopp2sa
+  storageAccountMock: nndevot14cbmockappsa
+  resourceGroup: nn-dev-ot14-cb-opp2-rg
+  apiRoot: https://nndevot14cbopp2sa.z13.web.core.windows.net

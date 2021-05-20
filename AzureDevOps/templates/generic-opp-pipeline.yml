@@ -1,0 +1,102 @@
+# File: generic-opp-build-pipeline.yml
+parameters:
+- name: branchVersion
+  displayName: Please enter your new branch version
+  type: string
+- name: configFolder
+  type: string
+  displayName: Please enter the config folder 
+- name: pipelineFolder
+  type: string
+  displayName: Please enter the location for the new build pipeline
+  default: \Development\OPP2\OT14
+
+pool: OT14DeployPool
+
+variables:
+- name: configFolder
+  value: ${{ parameters.configFolder }}
+- name: projectBuildVersion
+  value: ${{ parameters.branchVersion }}
+
+stages:
+  - stage: CreateNewBranch
+    displayName: Create new feature branch
+    jobs:
+    - job: CreateNewBranch
+      displayName: Create new feature branch
+      steps:
+        - checkout: self
+          persistCredentials: true
+        - script: echo $(System.DefaultWorkingDirectory)
+          displayName: Show default directory
+        - task: PowerShell@2
+          displayName: Creating new feature branch
+          inputs:
+            targetType: 'inline'
+            script: |
+              git branch -D feature/${{ parameters.branchVersion }}
+              git fetch -va
+              git pull
+              git checkout -b feature/${{ parameters.branchVersion }}           
+        - task: PowerShell@2
+          displayName: Creating new build pipeline file
+          inputs:
+            targetType: 'inline'
+            script: |
+              Copy-Item -Path "$env:SYSTEM_DEFAULTWORKINGDIRECTORY\AzureDevOps\templates\deploy-opp2.yml" -Destination "$env:SYSTEM_DEFAULTWORKINGDIRECTORY\AzureDevOps\deploy-opp-${{ parameters.branchVersion }}.yml"
+        - task: replacetokens@3
+          displayName: Replace tokens in yml
+          inputs:
+            rootDirectory: '$(System.DefaultWorkingDirectory)\AzureDevOps'
+            targetFiles: 'deploy-opp-${{ parameters.branchVersion }}.yml'
+            encoding: 'auto'
+            writeBOM: true
+            actionOnMissing: 'warn'
+            keepToken: false
+            tokenPrefix: '__'
+            tokenSuffix: '__'
+            useLegacyPattern: false
+            enableTransforms: false
+            enableTelemetry: true
+
+        - task: PowerShell@2
+          displayName: Push new branch
+          inputs:
+            targetType: inline
+            script: |
+              git config --global user.email "ot14-agent@nanthealth.com"
+              git config --global user.name "OT14 Agent"
+              git pull
+              git add .
+              git commit -m "New branch & pipeline file created by Azure pipelines [skip ci]"
+              git push --set-upstream origin feature/${{ parameters.branchVersion }}
+          
+
+  - stage: CreateNewBuildPipeline
+    displayName: Creating new build pipeline
+    jobs:
+      - job: CreateNewBuildPipeline
+        steps:
+        - script: az --version
+          displayName: 'Show Azure CLI version'
+
+        - script: az extension add -n azure-devops
+          displayName: 'Install Azure DevOps Extension'
+
+        - script: echo $(System.AccessToken) | az devops login
+          env:
+            AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+          displayName: 'Login Azure DevOps Extension'
+
+        - script: az devops configure --defaults organization=https://dev.azure.com/NantHealth project="NaviNet" --use-git-aliases true
+          displayName: 'Set default Azure DevOps organization and project'
+
+        - script: |
+            az pipelines build list
+            git pr list
+          displayName: 'Show build list and PRs'
+          
+        - script: |
+            az pipelines create --org=https://dev.azure.com/NantHealth/ --project=Navinet --name "OPP2 (CI) (v${{ parameters.branchVersion }})" --repository "Opp2" --branch feature/${{parameters.branchVersion}} --repository-type tfsgit --folder-path ${{ parameters.pipelineFolder }} --yaml-path "/AzureDevOps/deploy-opp-${{ parameters.branchVersion }}.yml"
+          displayName: 'Create new deploy pipeline'

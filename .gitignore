@@ -1,0 +1,38 @@
+# .gitignore
+.env*
+!.env.example
+
+.DS_Store
+node_modules
+/dist
+
+
+#Test output
+/test/allure-results
+/tests/e2e/logs/
+
+
+# local env files
+.npmrc.dev
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+unitTestResults.xml
+
+#Terraform exclusions
+Terraform/.terraform
+Terraform/terraform.exe
+junit-results

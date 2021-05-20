@@ -1,0 +1,26 @@
+#File: deploy-opp-job.yml
+parameters:
+- name: gitBranch
+  type: string
+  
+jobs:
+- job: deploy_opp2
+  displayName: Deploying Opp 2
+  steps:
+    - template: Deployment/download-artifact-pipeline.yml@AzurePipelines
+      parameters:
+        appName: opp2
+        gitBranch: ${{ parameters.gitBranch }}
+    - template: Deployment/deploy-storage-account.yml@AzurePipelines
+      parameters:
+        storageAccount: $(storageAccount)
+- job: deploy_mock_app
+  displayName: Deploying mock app
+  steps:
+    - template: Deployment/download-artifact-pipeline.yml@AzurePipelines
+      parameters:
+        appName: oppMockApp
+        gitBranch: ${{ parameters.gitBranch }}
+    - template: Deployment/deploy-storage-account.yml@AzurePipelines
+      parameters:
+        storageAccount: $(storageAccountMock)

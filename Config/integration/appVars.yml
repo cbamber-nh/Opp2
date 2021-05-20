@@ -1,0 +1,5 @@
+# File: appVars.yml
+variables:
+  oppclientid: 45efc354-eeba-48c1-8f3f-8081725dbde4
+  opptenantid: 35d9c757-9426-4428-8303-45b7324396b8
+  testConfig: integration

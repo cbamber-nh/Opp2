@@ -1,0 +1,102 @@
+#File: deploy-opp-stages.yml
+parameters:
+- name: gitBranch
+  type: string
+- name: deployMockApp
+  type: boolean
+  default: true
+
+stages:
+- stage: terraform_opp
+  displayName: Terraform
+  pool: $(deployPool)
+  jobs:
+    - job: 
+      steps:
+        - checkout: self
+          clean: true
+        - task: PowerShell@2
+          condition: and (succeeded(), eq('${{ parameters.deployMockApp }}', true))
+          displayName: Rename and Update mock app file for terraform
+          inputs:
+            targetType: 'inline'
+            script: 'Rename-Item -Path "$(System.DefaultWorkingDirectory)\Terraform\DeployMockApp.tf.test" -NewName "DeployMockApp.tf"'
+        - task: PowerShell@2
+          displayName: Rename and Update resource group app file for terraform
+          inputs:
+            targetType: 'inline'
+            script: 'Rename-Item -Path "$(System.DefaultWorkingDirectory)\Terraform\ResourceGroup.tf.test" -NewName "ResourceGroup.tf"'
+    - template: Deployment/terraform-storage-account.yml@AzurePipelines
+      parameters:
+        tfApprove: ${{ eq(variables.tfApprove, 'true') }}
+        checkoutCode: none
+- stage: build_opp
+  displayName: Build
+  pool: $(deployPool)
+  jobs:
+    - job: build_opp2
+      displayName: Building Opp 2
+      variables:
+        npmVersion: '${{ parameters.gitBranch }}'
+      steps:
+        - template: Build\build-vue-app.yml@AzurePipelines
+          parameters:
+            appName: opp2
+            gitBranch: '${{ parameters.gitBranch }}'
+            workingDir: '$(System.DefaultWorkingDirectory)\client\opp2'
+    - job: build_opp_auth
+      displayName: Building Opp Authentication
+      steps:
+        - script: echo Building Opp Authentication!
+          displayName: 'Run a one-line script'
+    - job: build_opp_backend
+      displayName: Building Opp Backend
+      steps:
+        - script: echo Building Opp Backend!
+          displayName: 'Run a one-line script'
+    - job: build_opp_mock_app
+      condition: and (succeeded(), eq('${{ parameters.deployMockApp }}', true))
+      displayName: Building Opp Mock App
+      variables:
+        npmVersion: '${{ parameters.gitBranch }}'
+      steps:
+        - template: Build\build-vue-app.yml@AzurePipelines
+          parameters:
+            appName: oppMockApp
+            gitBranch: ${{ parameters.gitBranch }}
+            workingDir: '$(System.DefaultWorkingDirectory)\test\mock-app'
+- stage: deploy_opp
+  displayName: Deploy
+  pool: $(deployPool)
+  jobs:
+    - job: deploy_opp2
+      displayName: Deploying Opp 2
+      steps:
+        - template: Deployment/download-artifact-pipeline.yml@AzurePipelines
+          parameters:
+            appName: opp2
+            gitBranch: ${{ parameters.gitBranch }}
+        - template: Deployment/deploy-storage-account.yml@AzurePipelines
+          parameters:
+            storageAccount: $(storageAccount)
+    - job: deploy_mock_app
+      displayName: Deploying mock app
+      condition: and (succeeded(), eq('${{ parameters.deployMockApp }}', true))
+      steps:
+        - template: Deployment/download-artifact-pipeline.yml@AzurePipelines
+          parameters:
+            appName: oppMockApp
+            gitBranch: ${{ parameters.gitBranch }}
+        - template: Deployment/deploy-storage-account.yml@AzurePipelines
+          parameters:
+            storageAccount: $(storageAccountMock)
+- stage: test
+  displayName: Test
+  pool: $(testPool)
+  jobs:
+    - job: test_integration
+      displayName: Running Tests
+      steps:
+        - template: Deployment/wdio-test.yml@AzurePipelines
+          parameters:
+            testConfig: $(testConfig)

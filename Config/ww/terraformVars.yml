@@ -1,0 +1,9 @@
+# File: terraformVars
+variables:
+  tfApprove: true
+  tfResourceGroup: nn-int-opp-rg
+  tfResourceManager: nn-int-opp-sp
+  tfStateStorageAccount: nnintopptsstatesa
+  tfStorageAccount: nnintoppsa
+  tfSubscription: nn-int-opp-sp
+  tfVarFile: int\int

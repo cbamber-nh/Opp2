@@ -1,0 +1,5 @@
+# File: deployVars.yml
+variables:
+  storageAccountMock: cbdevmockappsa
+  apiMockRoot: https://cbdevmockappsa.z13.web.core.windows.net/
+  oppRemote: opp@https://cbdevopp2sa.z13.web.core.windows.net/remoteEntry.js

@@ -1,0 +1,7 @@
+# File: deployVars.yml
+variables:
+  artifactLocation: navinet-npm-feature
+  azureSubscription: cb-dev
+  storageAccount: cbdevopp2sa
+  resourceGroup: cb-dev-opp2-rg
+  apiRoot: https://cbdevopp2sa.z13.web.core.windows.net

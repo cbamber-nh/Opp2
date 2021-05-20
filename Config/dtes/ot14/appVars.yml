@@ -1,0 +1,6 @@
+# File: appVars.yml
+variables:
+  oppclientid: 7d8a337a-2b5c-433e-b3b6-68ca65c8d9d0
+  opptenantid: 35d9c757-9426-4428-8303-45b7324396b8
+  powerbitenantid: 4ed143e2-2df9-4d7d-b03c-9f9210fe934a
+  testConfig: functional

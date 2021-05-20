@@ -1,0 +1,25 @@
+# File : deploy-opp-ot14.yml
+resources:
+  repositories:
+    - repository: AzurePipelines
+      type: git
+      name: AzurePipelinesGitLabIntegration
+      ref: refs/heads/feature/0.1822.24344
+  
+name: "Deploy OPP (nn-dev) (__projectBuildVersion__)"
+
+variables:
+- template: ../Config/pools.yml
+- template: ../__configFolder__/terraformVars.yml
+- template: ../Config/globalAppVars.yml
+- template: ../__configFolder__/appVars.yml
+- template: ../__configFolder__/deployVars.yml
+- template: ../__configFolder__/deployMockVars.yml
+
+extends:
+  template: Deployment/deploy-template-staging.yml@AzurePipelines
+  parameters:
+    templates:
+    - template: /AzureDevOps/templates/deploy-opp2-stages.yml@self
+      parameters:
+        gitBranch: __projectBuildVersion__

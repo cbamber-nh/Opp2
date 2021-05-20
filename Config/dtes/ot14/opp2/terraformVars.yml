@@ -1,0 +1,13 @@
+# File: terraformVars
+variables:
+  tfApprove: false
+  tfResourceGroup: nn-dev-ot14-rg
+  tfResourceManager: nn-dev-ot14
+  tfStateResourceGroup: nn-dev-ot14-rg
+  tfStateStorageAccount: nndevot14opptsstatesa
+  tfStateContainerName: nn-dev-ot14-opp2-c
+  tfStorageAccount: nndevot14opp2sa
+  tfSubscription: nn-dev-ot14
+  tfVarFile: dev\ot14
+  tfValidationUsers:
+  tfMockAppStorageAccount: nndevot14mockappsa

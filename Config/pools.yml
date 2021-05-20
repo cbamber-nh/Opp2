@@ -1,0 +1,4 @@
+# File: pools.yml
+variables:
+  deployPool: OT14DeployPool
+  testPool: OT14DeployPool

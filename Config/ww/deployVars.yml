@@ -1,0 +1,7 @@
+# File: deployVars.yml
+variables:
+  artifactLocation: navinet-npm-feature
+  azureSubscription: nn-int-opp-sp
+  storageAccount: nnintoppsa
+  resourceGroup: nn-int-opp-rg
+  projectversion: 0.0.18

@@ -1,0 +1,14 @@
+# File: globalAppVars.yml
+variables:
+  allowedRoles: OPP.GeneralUser, OPP.AdminUser
+  helpLink: /help/index.html
+  oppclientid: TBD
+  opptenantid: TBD
+  powerbitenantid: TBD
+  powerbiurl: https://app.powerbi.com/
+  privacyPolicyLink: /help/index.html
+  privacyPracticesLink: /help/index.html
+  sessionTimeout: 1800
+  sessionTimeoutCountdown: 60
+  termsOfUseLink: /help/index.html
+  testConfig: TBD
